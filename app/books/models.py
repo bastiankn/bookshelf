@@ -15,8 +15,7 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     published_date = models.DateField(null=True, blank=True)
     added_date = models.DateField(auto_now_add=True)
-    #cover_image = models.ImageField(upload_to='book_covers/', blank=True)
-    shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE, null=True, blank=True)
+    #cover_image = models.ImageField(upload_to='book_covers/', blank=True)   
     
     def __str__(self):
         return self.title
@@ -24,3 +23,8 @@ class Book(models.Model):
 class OwnedBook(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     isbn = models.ForeignKey(Book, on_delete=models.CASCADE)
+    shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f'"{self.isbn.title}" owned by {self.user.username}'
+
