@@ -17,6 +17,7 @@ from .tokens import account_activation_token
 def check_user_not_authenticated(user):
     return not user.is_authenticated
 
+
 # Login
 @user_passes_test(check_user_not_authenticated, login_url='/', redirect_field_name=None) # add redirect
 def login_view(request):
@@ -34,7 +35,7 @@ def login_view(request):
                 user = None 
         if user is not None:
             login(request, user)
-            return redirect('plan')
+            return redirect('') #redirect
         else:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'login.html', {
@@ -70,7 +71,8 @@ def activateEmail(request, user, to_email):
     mail_subject = "Activate your user account."
     message = render_to_string("template_activate_account.html", {
         'user': user.username,
-        'domain': '192.168.178.100/',
+        #'domain': '192.168.178.100/',
+        'domain': 'http://127.0.0.1:8000/',
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
         "protocol": 'http' #if request.is_secure() else 'http'
