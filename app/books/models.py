@@ -17,6 +17,7 @@ class Book(models.Model):
     added_date = models.DateField(auto_now_add=True)
     #cover_image = models.ImageField(upload_to='book_covers/', blank=True)
     shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title
