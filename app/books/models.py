@@ -15,7 +15,7 @@ class Book(models.Model):
     description = models.TextField(blank=True)
     published_date = models.DateField(null=True, blank=True)
     added_date = models.DateField(auto_now_add=True)
-    cover_image = models.ImageField(upload_to='book_covers/', blank=True)
+    #cover_image = models.ImageField(upload_to='book_covers/', blank=True)
     shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
