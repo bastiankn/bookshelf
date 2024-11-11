@@ -43,7 +43,7 @@ def login_view(request):
                 'active_page': 'login'
             })
     else:
-        return render(request, 'login.html', {'active_page': 'login'})
+        return render(request, 'user/login.html', {'active_page': 'login'})
 
 # User Activation
 def activate(request, uidb64, token):
@@ -59,7 +59,7 @@ def activate(request, uidb64, token):
         user.save()
 
         messages.success(request, "Thank you for your email confirmation. Now you can login your account.")
-        return redirect('login')
+        return redirect('/users/login')
     else:
         messages.error(request, "Activation link is invalid!")
 
@@ -69,7 +69,7 @@ def activate(request, uidb64, token):
 # Sending Email
 def activateEmail(request, user, to_email):
     mail_subject = "Activate your user account."
-    message = render_to_string("template_activate_account.html", {
+    message = render_to_string("user/template_activate_account.html", {
         'user': user.username,
         #'domain': '192.168.178.100/',
         'domain': 'http://127.0.0.1:8000/',
@@ -95,14 +95,14 @@ def register_view(request):
             user.is_active=False
             user.save()
             activateEmail(request, user, user.email)
-            return redirect('login')  
+            return redirect('/users/login')  
     else:
         form = CustomUserCreationForm()
         for error in list(form.errors.values()):
             messages.error(request, error)
-    return render(request, 'register.html', {'form': form,'active_page': 'register'})
+    return render(request, 'user/register.html', {'form': form,'active_page': 'register'})
 
 # Logout
 def logout_view(request):
     logout(request)
-    return redirect('/login') # add redirect
+    return redirect('/users/login') # add redirect
