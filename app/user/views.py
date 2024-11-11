@@ -19,7 +19,7 @@ def check_user_not_authenticated(user):
 
 
 # Login
-@user_passes_test(check_user_not_authenticated, login_url='/', redirect_field_name=None) # add redirect
+@user_passes_test(check_user_not_authenticated, login_url='/books/add', redirect_field_name=None) # add redirect
 def login_view(request):
     if request.method == 'POST':
         identifier = request.POST['username'] 
@@ -35,7 +35,7 @@ def login_view(request):
                 user = None 
         if user is not None:
             login(request, user)
-            return redirect('') #redirect
+            return redirect('add_book')
         else:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'login.html', {
@@ -63,7 +63,7 @@ def activate(request, uidb64, token):
     else:
         messages.error(request, "Activation link is invalid!")
 
-    return redirect('') # add redirect
+    return redirect('add_book') 
 
 
 # Sending Email
@@ -105,4 +105,4 @@ def register_view(request):
 # Logout
 def logout_view(request):
     logout(request)
-    return redirect('/') # add redirect
+    return redirect('/login') # add redirect

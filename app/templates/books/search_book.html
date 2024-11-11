@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Search Books</h2>
+<form method="get">
+    <input type="text" name="q" placeholder="Search by title or author">
+    <button type="submit">Search</button>
+</form>
+
+{% for book in results %}
+    <div>
+        <h3>{{ book.volumeInfo.title }}</h3>
+        <p>{{ book.volumeInfo.authors|join:", " }}</p>
+        <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="Book cover">
+    </div>
+{% endfor %}
+{% endblock %}

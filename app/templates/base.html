@@ -127,29 +127,19 @@
                 <ul class="navbar-nav">
                     <div style="display: flex; align-items: center;">
                         <!-- Form for Workoutplan Page -->
-                        <form action="{% url 'plan' %}" method="get" style="display: inline;">
+                        <form action="{% url 'add_book' %}" method="get" style="display: inline;">
                             <button type="submit" class="nav-link text-light" 
                                     style="background:none; border:none; padding:0; color:inherit; font:inherit; cursor:pointer; outline:none; margin-right: 30px;">
-                                <i class="fas fa-chart-line"></i> Workoutplan
+                                <i class="fas fa-chart-line"></i> Add Book
                             </button>
                         </form>
                         <!-- Form for Workoutplan Page -->
-                        <form action="{% url 'mass input' %}" method="get" style="display: inline;">
+                        <form action="{% url 'search_book' %}" method="get" style="display: inline;">
                             <button type="submit" class="nav-link text-light" 
                                     style="background:none; border:none; padding:0; color:inherit; font:inherit; cursor:pointer; outline:none; margin-right: 30px;">
-                                <i class="fas fa-chart-line"></i> Enter Mass
+                                <i class="fas fa-chart-line"></i> Search Book
                             </button>
                         </form>
-                        <!-- Form for Shutdown Action -->
-                        {% if user.is_authenticated and user.is_superuser %}
-                        <form action="{% url 'shutdown' %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link text-light" 
-                                    style="background:none; border:none; padding:0; color:inherit; font:inherit; cursor:pointer; outline:none; margin-right: 30px;">
-                                <i class="fas fa-chart-line"></i> Shutdown
-                            </button>
-                        </form>
-                        {% endif %}
                         <!-- Form for Logout Action -->
                         <form action="{% url 'logout' %}" method="post" style="display: inline;">
                             {% csrf_token %}
@@ -169,7 +159,7 @@
     <section class="welcome-section">
         <div class="container">
             <div data-aos="zoom-out">
-                <div class="fs-1">Welcome to <strong>Tracker</strong>, {{ username }}.</div>
+                <div class="fs-1">Welcome to <strong>Bookshelf</strong>, {{ username }}.</div>
                 {% block content %}{% endblock %}
             </div>
         </div>
