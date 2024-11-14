@@ -19,26 +19,28 @@ def check_user_not_authenticated(user):
 
 
 # Login
-@user_passes_test(check_user_not_authenticated, login_url='/books/add', redirect_field_name=None) # add redirect
+@user_passes_test(check_user_not_authenticated, login_url='/books/add', redirect_field_name=None)
 def login_view(request):
     if request.method == 'POST':
-        identifier = request.POST['username'] 
-        password = request.POST['password']
+        identifier = request.POST.get('username')
+        password = request.POST.get('password')
         
+        # Try authenticating by username first
         user = authenticate(request, username=identifier, password=password)
         
+        # If authentication fails, try using email
         if user is None:
-            try:
-                user_by_email = User.objects.get(email=identifier)
+            user_by_email = User.objects.filter(email=identifier).first()
+            if user_by_email:
                 user = authenticate(request, username=user_by_email.username, password=password)
-            except User.DoesNotExist:
-                user = None 
-        if user is not None:
+        
+        if user:
             login(request, user)
-            return redirect('add_book')
+            next_url = request.GET.get('next', 'add_book')
+            return redirect(next_url)
         else:
             messages.error(request, 'Invalid username or password.')
-            return render(request, 'login.html', {
+            return render(request, 'user/login.html', {
                 'form_error': 'Invalid username or password.',
                 'active_page': 'login'
             })
@@ -72,7 +74,7 @@ def activateEmail(request, user, to_email):
     message = render_to_string("user/template_activate_account.html", {
         'user': user.username,
         #'domain': '192.168.178.100/',
-        'domain': 'http://127.0.0.1:8000/',
+        'domain': '127.0.0.1:8000/',
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
         "protocol": 'http' #if request.is_secure() else 'http'
