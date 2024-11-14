@@ -127,4 +127,5 @@ def register_view(request):
 # Logout
 def logout_view(request):
     logout(request)
-    return redirect(reverse('login')) # add redirect
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect(reverse('login')) 
