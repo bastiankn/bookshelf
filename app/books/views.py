@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from .models import Book, Shelf, OwnedBook
@@ -21,25 +22,25 @@ def owned_books(request):
     user_books = OwnedBook.objects.filter(user=request.user)
     return render(request, 'books/mybooks.html', {'books': user_books})
 
-# Overview books in a specific shelf
-@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
-def shelved_books(request, shelf_name):
-    shelf = get_object_or_404(Shelf, name=shelf_name, user=request.user)
-    user_shelved_books = OwnedBook.objects.filter(user=request.user, shelf=shelf)
-    return render(request, 'books/shelved_books.html', {
-        'shelf': shelf,
-        'books': user_shelved_books
-    })
-
 # add books manually
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def add_book(request):
-    form = BookForm()
     if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
+        form = BookForm(request.POST, request.FILES)  # Handle file uploads for cover_image
         if form.is_valid():
-            form.save()
-            return redirect('book_list')
+            book = form.save(commit=False)
+            book.save()
+
+            owned_book = OwnedBook(user=request.user, isbn=book)  
+            owned_book.save()
+
+            messages.success(request, 'Book added successfully and associated with your account.')
+            return redirect('owned_books')  
+        else:
+            messages.error(request, 'There was an error with your form.')
+    else:
+        form = BookForm()
+
     return render(request, 'books/add_book.html', {'form': form})
 
 # search for books

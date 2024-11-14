@@ -8,6 +8,12 @@
         {% for book in books %}
             <li>
                 <strong>{{ book.isbn.title }}</strong> by {{ book.isbn.author }}
+                <br>
+                    {% if book.isbn.cover_image %}
+                    <img src="{{ book.isbn.cover_image.url }}" alt="Cover image of {{ book.isbn.title }}" width="200">
+                    {% else %}
+                        <p>No cover image available.</p>
+                    {% endif %}
             </li>
         {% endfor %}
     </ul>

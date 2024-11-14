@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -131,3 +132,7 @@ EMAIL_HOST_PASSWORD = 'wcsq swnt hqvw byos'
 EMAIL_PORT = 587 
 EMAIL_USE_TLS = True
 PASSWORD_RESET_TIMER = 14400
+
+# Path to the media directory
+MEDIA_URL = '/media/'  # The URL prefix for accessing media files (e.g., http://localhost:8000/media/)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # The file system path to store uploaded files
