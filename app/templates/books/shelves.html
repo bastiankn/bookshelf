@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Shelf Overview</h2>
+
+{% if shelves %}
+    <ul>
+        {% for shelf in shelves %}
+            <li>
+                <strong>{{ shelf.name }}</strong>
+                <!-- You can add other fields from the Shelf model if needed -->
+                <p>Books on this shelf: 
+                    {% for owned_book in shelf.ownedbook_set.all %}
+                        <span>{{ owned_book.isbn.title }}</span>
+                    {% endfor %}
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You don't have any shelves yet.</p>
+{% endif %}
+
+{% endblock %}

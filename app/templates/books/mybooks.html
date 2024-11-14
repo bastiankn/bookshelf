@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Book Overview</h2>
+
+{% if books %}
+    <ul>
+        {% for book in books %}
+            <li>
+                <strong>{{ book.isbn.title }}</strong> by {{ book.isbn.author }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You don't own any books yet.</p>
+{% endif %}
+
+{% endblock %}
