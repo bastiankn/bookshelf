@@ -11,21 +11,73 @@ import requests
 def check_user_authenticated(user):
     return user.is_authenticated
 
-# View to create a shelf
-@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
-def add_shelf(request):
-    if request.method == 'POST':
-        form = ShelfForm(request.POST)
-        print(form)
-        if form.is_valid():
-            shelf = form.save(commit=False)  
-            shelf.user = request.user  
-            shelf.save()  
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': 'Shelf could not be added.'})
+def save_and_create_owned_book(form, model, user, commit=False):
+    """
+    Generic function to handle form validation, saving an object, 
+    and creating an OwnedBook if it's a book.
+    :param form: The form to validate and save
+    :param model: The model class (either Shelf or Book)
+    :param user: The user object to associate with the model
+    :param commit: Whether to commit the save immediately or not
+    :return: JsonResponse indicating success or failure
+    """
+    if form.is_valid():
+        obj = form.save(commit=commit)
+        if not commit:
+            obj.user = user
+            obj.save()
+
+        # If it's a book, create the OwnedBook
+        if model == Book:
+            OwnedBook.objects.create(user=user, isbn=obj)
+
+        return JsonResponse({'success': True})
     else:
-        form = ShelfForm()
+        return JsonResponse({'success': False, 'error': f'{model.__name__} could not be added.'})
+
+@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
+def add_item(request, item_type):
+    """
+    Generic view to add either a shelf or a book based on the item_type parameter.
+    :param item_type: Can be 'shelf' or 'book'
+    """
+    form = None
+    model = None
+    
+    if item_type == 'shelf':
+        form = ShelfForm(request.POST or None)
+        model = Shelf
+    elif item_type == 'book':
+        form = BookForm(request.POST, request.FILES or None)
+        model = Book
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid item type.'})
+
+    if request.method == 'POST':
+        return save_and_create_owned_book(form, model, request.user, commit=False)
+
+    return {'form': form}
+
+@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
+def add_item(request, item_type):
+    """
+    Generic view to add either a shelf or a book based on the item_type parameter.
+    :param item_type: Can be 'shelf' or 'book'
+    """
+    form = None
+    model = None
+    
+    if item_type == 'shelf':
+        form = ShelfForm(request.POST or None)
+        model = Shelf
+    elif item_type == 'book':
+        form = BookForm(request.POST, request.FILES or None)
+        model = Book
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid item type.'})
+
+    if request.method == 'POST':
+        return save_and_create_owned_book(form, model, request.user, commit=False)
 
     return {'form': form}
 
@@ -33,38 +85,21 @@ def add_shelf(request):
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def shelves(request):
     user_shelves = Shelf.objects.filter(user=request.user)
-    form_context = add_shelf(request)
+    form_context = add_item(request, 'shelf')  
     if isinstance(form_context, JsonResponse):
         return form_context
     form = form_context.get('form')
     return render(request, 'books/shelves.html', {'shelves': user_shelves, 'form': form})
 
-# View to add books manually
-@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
-def add_book(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            book = form.save()
-            OwnedBook.objects.create(user=request.user, isbn=book)
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': 'Book could not be added.'})
-    else:
-        form = BookForm()
-
-    return {'form': form}
-
 # Overview all owned books
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def owned_books(request):
     user_books = OwnedBook.objects.filter(user=request.user)
-    form_context = add_book(request)
+    form_context = add_item(request, 'book')  
     if isinstance(form_context, JsonResponse):
         return form_context
     form = form_context.get('form')
     return render(request, 'books/mybooks.html', {'books': user_books, 'form': form})
-
 
 # Search for books
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
