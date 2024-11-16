@@ -228,10 +228,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get the modal
-            var modal = document.getElementById('addBookModal');
+            var modal = document.getElementById('openModal');
         
             // Get the button that opens the modal
-            var btn = document.getElementById('addBookButton');
+            var btn = document.getElementById('addModalButton');
         
             // Get the <span> element that closes the modal
             var span = document.getElementsByClassName('close')[0];
@@ -254,12 +254,14 @@
             }
         
             // AJAX form submission
-            document.getElementById('addBookForm').addEventListener('submit', function(event) {
+            document.getElementById('modalForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 
                 var formData = new FormData(this);
+
+                var url = btn.getAttribute('data-url');
         
-                fetch("{% url 'owned_books' %}", {
+                fetch(url, {
                     method: 'POST',
                     body: formData,
                     headers: {
