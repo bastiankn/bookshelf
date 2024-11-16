@@ -7,7 +7,7 @@ class BookForm(forms.ModelForm):
         model = Book
         fields = ['title', 'author', 'isbn', 'published_date', 'cover_image']    
 
-#class ShelfForm(forms.ModelForm):
-    #class Meta:
-        #model = Shelf
-        #fields = ['isbn', 'shelf']
+class ShelfForm(forms.ModelForm):
+    class Meta:
+        model = Shelf
+        fields = ['name']

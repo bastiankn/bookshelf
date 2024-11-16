@@ -271,7 +271,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById('formMessages').innerHTML = "<p style='color:green;'>Book added successfully!</p>";
+                        document.getElementById('formMessages').innerHTML = "<p style='color:green;'>Successfully added!</p>";
                         setTimeout(() => location.reload(), 1500); // Reload page after success
                     } else {
                         document.getElementById('formMessages').innerHTML = "<p style='color:red;'>"+ data.error +"</p>";

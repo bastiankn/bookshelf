@@ -2,6 +2,22 @@
 
 {% block content %}
 <h2>Shelf Overview</h2>
+<!-- Button to open the modal -->
+<button id="addModalButton" data-url="{% url 'shelves' %}">Add Shelf</button>
+
+<!-- The Modal -->
+<div id="openModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add a New Shelf</h2>
+        <form id="modalForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save Shelf</button>
+        </form>
+        <div id="formMessages"></div>
+    </div>
+</div>
 
 {% if shelves %}
     <ul>
