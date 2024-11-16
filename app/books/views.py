@@ -22,6 +22,13 @@ def save_and_create_owned_book(form, model, user, commit=False):
     :param commit: Whether to commit the save immediately or not
     :return: JsonResponse indicating success or failure
     """
+    if model == Book:
+            isbn=form.data.get('isbn')
+            existing_book = Book.objects.filter(isbn=isbn).first()
+            if existing_book:
+                OwnedBook.objects.create(user=user, isbn=existing_book)
+                return JsonResponse({'success': True})
+
     if form.is_valid():
         obj = form.save(commit=commit)
         if not commit:
@@ -33,14 +40,6 @@ def save_and_create_owned_book(form, model, user, commit=False):
             OwnedBook.objects.create(user=user, isbn=obj)
 
         return JsonResponse({'success': True})
-    elif model == Book:
-        obj=form.data.get('isbn')
-        existing_book = Book.objects.filter(isbn=obj).first()
-        if existing_book:
-            OwnedBook.objects.create(user=user, isbn=existing_book)
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': f'{model.__name__} could not be added.'})
     else:
         return JsonResponse({'success': False, 'error': f'{model.__name__} could not be added.'})
 
