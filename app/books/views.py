@@ -25,15 +25,12 @@ def add_book(request):
         if form.is_valid():
             book = form.save()
             OwnedBook.objects.create(user=request.user, isbn=book)
-            
-            # Return a JSON response for AJAX call
             return JsonResponse({'success': True})
         else:
-            return JsonResponse({'success': False, 'error': 'There was an error with your form.'})
+            return JsonResponse({'success': False, 'error': 'Book could not be added.'})
     else:
         form = BookForm()
-    
-    # Return the form for the GET request
+
     return {'form': form}
 
 # Overview all owned books
@@ -47,7 +44,7 @@ def owned_books(request):
     return render(request, 'books/mybooks.html', {'books': user_books, 'form': form})
 
 
-# search for books
+# Search for books
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def search_books(request):
     query = request.GET.get('q')

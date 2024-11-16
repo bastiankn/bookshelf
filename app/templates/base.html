@@ -259,7 +259,7 @@
                 
                 var formData = new FormData(this);
         
-                fetch("{% url 'add_book' %}", {
+                fetch("{% url 'owned_books' %}", {
                     method: 'POST',
                     body: formData,
                     headers: {

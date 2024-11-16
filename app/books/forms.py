@@ -1,6 +1,7 @@
 from django import forms
 from . models import Book, OwnedBook, Shelf
 
+# form for adding books manually
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
