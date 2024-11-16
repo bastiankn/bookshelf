@@ -14,7 +14,8 @@ def check_user_authenticated(user):
 def save_and_create_owned_book(form, model, user, commit=False):
     """
     Generic function to handle form validation, saving an object, 
-    and creating an OwnedBook if it's a book.
+    and creating an OwnedBook if it's a book. Also handles the case
+    where a book already exists and just associates it with the user.
     :param form: The form to validate and save
     :param model: The model class (either Shelf or Book)
     :param user: The user object to associate with the model
@@ -32,31 +33,16 @@ def save_and_create_owned_book(form, model, user, commit=False):
             OwnedBook.objects.create(user=user, isbn=obj)
 
         return JsonResponse({'success': True})
+    elif model == Book:
+        obj=form.data.get('isbn')
+        existing_book = Book.objects.filter(isbn=obj).first()
+        if existing_book:
+            OwnedBook.objects.create(user=user, isbn=existing_book)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': f'{model.__name__} could not be added.'})
     else:
         return JsonResponse({'success': False, 'error': f'{model.__name__} could not be added.'})
-
-@user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
-def add_item(request, item_type):
-    """
-    Generic view to add either a shelf or a book based on the item_type parameter.
-    :param item_type: Can be 'shelf' or 'book'
-    """
-    form = None
-    model = None
-    
-    if item_type == 'shelf':
-        form = ShelfForm(request.POST or None)
-        model = Shelf
-    elif item_type == 'book':
-        form = BookForm(request.POST, request.FILES or None)
-        model = Book
-    else:
-        return JsonResponse({'success': False, 'error': 'Invalid item type.'})
-
-    if request.method == 'POST':
-        return save_and_create_owned_book(form, model, request.user, commit=False)
-
-    return {'form': form}
 
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def add_item(request, item_type):
