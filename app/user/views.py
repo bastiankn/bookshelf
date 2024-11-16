@@ -22,7 +22,7 @@ def check_user_not_authenticated(user):
 
 
 # Login
-@user_passes_test(check_user_not_authenticated, login_url='/books/add', redirect_field_name=None)
+@user_passes_test(check_user_not_authenticated, login_url='/books/shelves', redirect_field_name=None)
 def login_view(request):
     if request.method == 'POST':
         identifier = request.POST.get('username')
@@ -39,7 +39,7 @@ def login_view(request):
         
         if user:
             login(request, user)
-            next_url = request.GET.get('next', 'add_book')
+            next_url = request.GET.get('next', 'shelves')
             return redirect(next_url)
         else:
             messages.error(request, 'Invalid username or password.')
@@ -68,7 +68,7 @@ def activate(request, uidb64, token):
     else:
         messages.error(request, "Activation link is invalid!")
 
-    return redirect('add_book') 
+    return redirect('shelves_book') 
 
 
 # Sending Email
@@ -96,14 +96,14 @@ def activateEmail(request, user, to_email):
         if email.send():
             messages.success(request, f'Dear {user}, please check your email {to_email} for the activation link. Note: Check your spam folder.')
         else:
-            messages.error(request, f'Failed to send email to {to_email}. Please check if the address is correct.')
+            messages.error(request, f'Failed to send email to {to_email}. Please check if the shelvesress is correct.')
     except Exception as e:
         logger.error(f"Error sending activation email to {to_email}: {e}")
         messages.error(request, 'An unexpected error occurred while sending the activation email.')
 
 
 # Register
-@user_passes_test(check_user_not_authenticated, login_url='/books/add', redirect_field_name=None)
+@user_passes_test(check_user_not_authenticated, login_url='/books/shelves', redirect_field_name=None)
 def register_view(request):
     form = CustomUserCreationForm(request.POST or None)
     

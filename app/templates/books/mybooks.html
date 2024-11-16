@@ -2,6 +2,22 @@
 
 {% block content %}
 <h2>Book Overview</h2>
+<!-- Button to open the modal -->
+<button id="addBookButton">Add Book</button>
+
+<!-- The Modal -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add a New Book</h2>
+        <form id="addBookForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save Book</button>
+        </form>
+        <div id="formMessages"></div>
+    </div>
+</div>
 
 {% if books %}
     <ul>

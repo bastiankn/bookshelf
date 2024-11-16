@@ -116,6 +116,40 @@
             border: 1px solid #f5c6cb;
         }
 
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #000000;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
     </style>
 </head>
 
@@ -190,6 +224,61 @@
     {% endif %}
 
     <!-- Bootstrap JS and Dependencies -->
+      <!-- Modal Popup -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the modal
+            var modal = document.getElementById('addBookModal');
+        
+            // Get the button that opens the modal
+            var btn = document.getElementById('addBookButton');
+        
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName('close')[0];
+        
+            // When the user clicks the button, open the modal
+            btn.onclick = function() {
+                modal.style.display = 'block';
+            }
+        
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() {
+                modal.style.display = 'none';
+            }
+        
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        
+            // AJAX form submission
+            document.getElementById('addBookForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                var formData = new FormData(this);
+        
+                fetch("{% url 'add_book' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('formMessages').innerHTML = "<p style='color:green;'>Book added successfully!</p>";
+                        setTimeout(() => location.reload(), 1500); // Reload page after success
+                    } else {
+                        document.getElementById('formMessages').innerHTML = "<p style='color:red;'>"+ data.error +"</p>";
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+        </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
