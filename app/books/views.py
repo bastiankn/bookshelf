@@ -86,17 +86,43 @@ def owned_books(request):
     form = form_context.get('form')
     return render(request, 'books/mybooks.html', {'books': user_books, 'form': form})
 
+
 # Search for books
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def search_books(request):
     query = request.GET.get('q')
     results = []
     if query:
-        # Use Google Books API to search for books
-        response = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={query}')
+        # Use API to search for books
+        response = requests.get(f'https://openlibrary.org/search.json?q={query}')
         if response.status_code == 200:
             data = response.json()
-            results = data.get('items', [])
+            results = data.get('docs', [])
+
+    if request.method == 'POST':
+        # Process the POST request
+        title = request.POST.get('title')
+        author_name = request.POST.get('author_name')
+        first_publish_year = request.POST.get('first_publish_year')
+        isbn_string = request.POST.get('isbn')
+        isbn_list = isbn_string.strip("[]").replace("'", "").split(", ")
+        print(isbn_list)
+        first_isbn = isbn_list[1]
+        print(title)
+        print(author_name)
+        print(first_publish_year)
+        print(first_isbn)
+        # Create a form instance for Book 
+        form = BookForm(data={
+            'title': title,
+            'author': author_name,
+            #'published_date': first_publish_year,
+            'isbn': first_isbn
+        })
+        print(form)
+
+        save_and_create_owned_book(form, Book, request.user, commit=False)
+
     return render(request, 'books/search_book.html', {'results': results})
 
 

@@ -18,6 +18,12 @@
         <div id="formMessages"></div>
     </div>
 </div>
+<form action="{% url 'search_book' %}">
+    <button type="submit" class="nav-link text-light" 
+            style="background:none; border:none; padding:0; color:inherit; font:inherit; cursor:pointer; outline:none; margin-right: 30px;">
+        <i class="fas fa-chart-line"></i> Search Books
+    </button>
+</form>
 
 {% if books %}
     <ul>
