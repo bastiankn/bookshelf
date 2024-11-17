@@ -29,10 +29,12 @@
     <ul>
         {% for book in books %}
             <li>
-                <strong>{{ book.isbn.title }}</strong> by {{ book.isbn.author }}
+                <strong>{{ book.title }}</strong> by {{ book.author }}
                 <br>
-                    {% if book.isbn.cover_image %}
-                    <img src="{{ book.isbn.cover_image.url }}" alt="Cover image of {{ book.isbn.title }}" width="200">
+                    {% if book.cover_image_link %}
+                    <img src="https://covers.openlibrary.org/b/id/{{ book.cover_image_link }}-L.jpg" alt="Cover image of {{ book.title }}" width="200">
+                    {% elif book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" alt="Cover image of {{ book.title }}" width="200">
                     {% else %}
                         <p>No cover image available.</p>
                     {% endif %}

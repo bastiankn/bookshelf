@@ -15,14 +15,14 @@
         <p>{{ book.author_name|join:", " }} published in {{book.first_publish_year}}</p>
         <p>{{ book.isbn }}</p>
 
-        <!-- Add to owned books button 
-        <form id="modalForm" enctype="multipart/form-data">-->
+        <!-- Add to owned books button -->
         <form action="" method="post">
             {% csrf_token %}
             <input type="hidden" name="title" value="{{ book.title }}">
             <input type="hidden" name="author_name" value="{{ book.author_name|join:', ' }}">
             <input type="hidden" name="first_publish_year" value="{{ book.first_publish_year }}">
             <input type="hidden" name="isbn" value="{{ book.isbn }}">
+            <input type="hidden" name="cover_image_link" value="{{ book.cover_i }}">
             <button type="submit">Add to My Books</button>
         </form>
     </div>

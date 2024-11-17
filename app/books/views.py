@@ -80,11 +80,14 @@ def shelves(request):
 @user_passes_test(check_user_authenticated, login_url='/users/login', redirect_field_name='next')
 def owned_books(request):
     user_books = OwnedBook.objects.filter(user=request.user)
+    isbns = user_books.values_list('isbn', flat=True)
+    books = Book.objects.filter(id__in=isbns)
+    
     form_context = add_item(request, 'book')  
     if isinstance(form_context, JsonResponse):
         return form_context
     form = form_context.get('form')
-    return render(request, 'books/mybooks.html', {'books': user_books, 'form': form})
+    return render(request, 'books/mybooks.html', {'books': books, 'form': form})
 
 
 # Search for books
@@ -106,18 +109,15 @@ def search_books(request):
         first_publish_year = request.POST.get('first_publish_year')
         isbn_string = request.POST.get('isbn')
         isbn_list = isbn_string.strip("[]").replace("'", "").split(", ")
-        print(isbn_list)
         first_isbn = isbn_list[1]
-        print(title)
-        print(author_name)
-        print(first_publish_year)
-        print(first_isbn)
+        cover_image_link = request.POST.get('cover_image_link')
         # Create a form instance for Book 
         form = BookForm(data={
             'title': title,
             'author': author_name,
             #'published_date': first_publish_year,
-            'isbn': first_isbn
+            'isbn': first_isbn,
+            'cover_image_link': cover_image_link
         })
         print(form)
 

@@ -110,7 +110,7 @@ def register_view(request):
     if request.method == 'POST':
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False  # Deactivate account until email confirmation
+            user.is_active = False  
             user.save()
             activateEmail(request, user, user.email)
             return redirect(reverse('login'))
